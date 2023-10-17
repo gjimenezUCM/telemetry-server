@@ -1,9 +1,16 @@
+/**
+ * Script que se ejecuta la primera vez que se crea el volumen asociado a la base de datos.
+ * Crea el usuario que se encargará de comunicarse con MongoDB y que será responsable de almacenar la información en la base de datos
+ * Las credenciales están en el archivo .env usado durante el despliegue
+ */
 let uajUser = process.env.MONGODB_USER;
 let uajPwd = process.env.MONGODB_PASSWORD;
 let dbName = process.env.MONGO_INITDB_DATABASE;
+
 db = new Mongo().getDB(dbName);
 print("INITDB: Connected to "+db.getName());
 
+// Creación del usuario
 db.createUser({
   user: uajUser,
   pwd: uajPwd,
@@ -14,11 +21,3 @@ db.createUser({
       }
   ]
 });
-
-for (let i = 1; i <= 9; i++) {
-  let collectionName = "grupo0"+i;
-  // Capped collections with 20Mb or 1000 documents
-  db.createCollection(collectionName, { capped: true, size: 20971520, max: 1000 }).then(function(collection) {
-    console.log('Collection'+ collectionName+' was created!');
-  });
-}

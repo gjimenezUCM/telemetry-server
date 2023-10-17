@@ -1,3 +1,8 @@
+/**
+ * Módulo de conexión con la base de datos usando Mongoose
+ * Los datos de conexión se espera que estén en el archivo de entorno que se pasa
+ * durante el despliegue de la aplicación
+ */
 let {
     MONGODB_USER,
     MONGODB_PASSWORD,
@@ -10,13 +15,21 @@ const mongoose = require("mongoose");
 
 const db = {};
 db.mongoose = mongoose;
-if(!DB_HOST) DB_HOST = "localhost";
+if(!DB_HOST) {
+    DB_HOST = "localhost";
+}
 db.url = `mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${DB_HOST}:${MONGODB_DOCKER_PORT}/${MONGODB_DATABASE}`;
 
 
 module.exports = {
+    /**
+     * Inicialización de la base de datos en MongoDB. Se crea una colección para cada grupo. Esta colección está limitada a 20Mb
+     * o a 1000 documentos, de modo que si se sobrepasa este umbral se machacará la información más antigua (como si fuese 
+     * una cola circular).
+     * Si se produce un fallo durante la inicialización entonces se detiene el proceso completo
+     * @param {function} onReady Función que se ejecutará en caso de que se haya producido la conexión con la base de datos
+     */
     init: async function(onReady) {
-        console.log(db.url);
         db.mongoose
         .connect(db.url, {
             useNewUrlParser: true,
@@ -25,6 +38,7 @@ module.exports = {
         .then(() => {
             console.log("Connected to the database!");
             this.groups = {};
+            // Creamos la colección para cada uno de los grupos
             for (let i=1; i<=8; i++){
                 let groupId = "grupo0"+i;
                 // Capped collections with 20Mb or 1000 documents
@@ -38,8 +52,9 @@ module.exports = {
             onReady(db);
         })
         .catch(err => {
-            console.log("Cannot connect to the database!", err);
-            process.exit();
+            // Se ha producido un error: lo avisamos y cerramos el proceso.
+            console.error("Cannot connect to the database!", err);
+            process.exit(1);
         });
     },
 };

@@ -1,5 +1,5 @@
 {
-  "name": "uaj-tracker-api",
+  "name": "uaj-telemetry-api",
   "version": "v1.0",
   "description": "API para el servidor de telemetria de UAJ",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "start": "node index.js"
   },
   "keywords": [
-    "swagger"
+    "telemetry"
   ],
   "license": "Unlicense",
   "private": true,

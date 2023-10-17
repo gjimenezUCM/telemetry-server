@@ -30,7 +30,6 @@ function getEvents (req, res) {
     let group = db.groups[groupId];
     if (group){        
       group.find({}).then(function(data){
-        console.log("Estoy en el find")
         let items = [];
         if (data.length>0){
           let i=0;

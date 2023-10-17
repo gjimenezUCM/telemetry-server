@@ -18,3 +18,14 @@ En desarrollo, el servidor queda a la escucha en `localhost:8080`. Hay un punto 
 ```
 [ { ... }, { ... } ]
 ```
+
+## Despliegue
+
+El servidor se puede desplegar usando Docker:
+
+```
+docker compose build
+docker compose up
+```
+
+Para el correcto funcionamiento es necesario crear un archivo `.env` a partir del archivo `template.env`.
