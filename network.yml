@@ -1,0 +1,12 @@
+version: '3.3'
+
+networks:
+  telemetry-server:
+
+services:
+  mongodb:
+    networks:
+      telemetry-server:
+  app:
+    networks:
+      telemetry-server:

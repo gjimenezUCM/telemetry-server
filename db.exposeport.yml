@@ -2,7 +2,7 @@
 # This extension exposes the MongoDB using the host port MONGO_HOST_PORT
 # Normally, it is employed only for debugging purposes
 
-version: "3.3"
+version: "3.8"
 
 services:
   mongodb:
