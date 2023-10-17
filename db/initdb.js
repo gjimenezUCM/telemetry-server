@@ -5,7 +5,7 @@
  */
 let uajUser = process.env.MONGODB_USER;
 let uajPwd = process.env.MONGODB_PASSWORD;
-let dbName = process.env.MONGO_INITDB_DATABASE;
+let dbName = process.env.MONGODB_DATABASE;
 
 db = new Mongo().getDB(dbName);
 print("INITDB: Connected to "+db.getName());

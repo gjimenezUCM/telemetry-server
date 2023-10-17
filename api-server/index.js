@@ -33,7 +33,7 @@ function initDatabaseConnection(onReady) {
 /**
  * Inicialización de Express
  */
-const PORT = process.env.NODE_DOCKER_PORT || 3000;
+const PORT = process.env.API_CONTAINER_PORT || 3000;
 app.on("ready", () => { console.log(`Server is running on port ${PORT}.`); });
 app.listen(PORT, ()=> {
     initDatabaseConnection(() =>  {

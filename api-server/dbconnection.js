@@ -7,7 +7,7 @@ let {
     MONGODB_USER,
     MONGODB_PASSWORD,
     DB_HOST,
-    MONGODB_DOCKER_PORT,
+    MONGODB_CONTAINER_PORT,
     MONGODB_DATABASE,
 } = process.env;
 
@@ -18,7 +18,7 @@ db.mongoose = mongoose;
 if(!DB_HOST) {
     DB_HOST = "localhost";
 }
-db.url = `mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${DB_HOST}:${MONGODB_DOCKER_PORT}/${MONGODB_DATABASE}`;
+db.url = `mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${DB_HOST}:${MONGODB_CONTAINER_PORT}/${MONGODB_DATABASE}`;
 
 
 module.exports = {
@@ -42,7 +42,22 @@ module.exports = {
             for (let i=1; i<=8; i++){
                 let groupId = "grupo0"+i;
                 // Capped collections with 20Mb or 1000 documents
-                const anySc = db.mongoose.Schema({ timestamp: String }, { strict: false, collection: groupId , capped: { size: 20971520, max: 1000} });
+                let maxSize = parseFloat(process.env.MAX_SIZE_MB);
+                if (isNaN(maxSize)) {
+                    // Default Capped collections with 20Mb
+                    maxSize = 20;
+                    console.log(`MAX_SIZE_MB not valid. Using default ${maxSize}Mb`); 
+                }
+                maxSize = maxSize* 1024 * 1024;
+
+                // Default Capped collections with 1000 documents
+                let maxDocuments = parseInt(process.env.MAX_DOCUMENTS);
+                if (isNaN(maxDocuments)) {
+                    maxDocuments = 1000;
+                    console.log(`MAX_DOCUMENTS not valid. Using default ${maxDocuments} documents`); 
+                }
+
+                const anySc = db.mongoose.Schema({ timestamp: String }, { strict: false, collection: groupId, capped: { size: maxSize, max: maxDocuments } });
                 anySc.method("toJSON", function() {
                     const { __v, _id, ...object } = this.toObject();
                     return object;

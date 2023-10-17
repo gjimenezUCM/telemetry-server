@@ -7,12 +7,8 @@ services:
     restart: unless-stopped
     command: mongod --quiet --logpath /dev/null 
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
       - MONGODB_USER=${MONGODB_USER:-uajuser}
       - MONGODB_PASSWORD=$MONGODB_PASSWORD
-    ports:
-      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
     volumes:
       - db:/data/db
   app:
@@ -22,13 +18,13 @@ services:
     build: ./api-server
     restart: unless-stopped
     ports:
-      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+      - $API_HOST_PORT:$API_CONTAINER_PORT
     environment:
       - DB_HOST=mongodb
       - DB_USER=${MONGODB_USER:-uaj_user}
       - DB_PASSWORD=$MONGODB_PASSWORD
       - DB_NAME=${MONGODB_DATABASE:-uaj_telemetry_db}
-      - DB_PORT=${MONGODB_DOCKER_PORT:-27017}
+      - DB_PORT=${MONGODB_CONTAINER_PORT:-27017}
     stdin_open: true
     tty: true
 
