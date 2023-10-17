@@ -21,11 +21,12 @@ En desarrollo, el servidor queda a la escucha en `localhost:8080`. Hay un punto 
 
 ## Despliegue
 
-El servidor se puede desplegar usando Docker:
+El servidor se puede desplegar usando Docker. Previamente, es necesario crear un archivo `.env` a partir del archivo `template.env`. En es archivo hay documentación detallada de las variables de entorno que se usan.
+
+Una vez creado el archivo `.env` se puede realizar el despliegue con: 
 
 ```
 docker compose build
 docker compose up
 ```
 
-Para el correcto funcionamiento es necesario crear un archivo `.env` a partir del archivo `template.env`.
