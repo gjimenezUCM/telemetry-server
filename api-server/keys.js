@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-require('dotenv').config('../.env');
+require("dotenv").config({ path: "../.env" });
 
 /**
  * Script para la creación de las claves que se usarán para cada uno de los grupos y que sirven para validar
