@@ -3,13 +3,14 @@
 
 ### POST Add a new event list to the telemetry server
 POST http://localhost:8080/telemetry/grupo01/
-x-api-key: <My Token>
+Authorization: Bearer <My Token>
 Content-Type: application/json
 
 [
-    {  "myId": 5, "type": "myEvent"}
+    {  "myId": 55, "type": "myEvent"},
+    {  "myId": 56, "type": "myEvent2" }
 ]
 
 ### GET Return the event collections for grupo01
 GET http://localhost:8080/telemetry/grupo01/
-x-api-key: <My Token>
+Authorization: Bearer <My Token>

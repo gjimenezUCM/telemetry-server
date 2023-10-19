@@ -1,15 +1,45 @@
 const crypto = require('crypto');
 
 module.exports = app => {
-    let router = require("express").Router();
-    router.get("/telemetry/:groupId", getEvents);
-    router.post("/telemetry/:groupId", pushEvents);
-    app.use("/", router);
+  let router = require("express").Router();
+
+  // Usamos como middleware la función auth para hacer siempre
+  // La comprobación del token
+  router.get("/telemetry/:groupId", auth, getEvents);
+  router.post("/telemetry/:groupId", auth, pushEvents);
+  app.use("/", router);
 };
 
 let {
   SECRET
 } = process.env;
+
+/**
+ * Función de middleware que se encarga de la autenticación y de comprobar
+ * que el token pasado es válido para el grupo
+ * @param {Request} req Objeto de petición en Express
+ * @param {Response} res Objeto de respuesta en Express
+ * @param {Function} next Siguiente función de middleware a ejecutar 
+ * @returns 
+ */
+function auth(req, res, next) {
+  // Se obtiene el identificador del grupo
+  const groupId = req.params.groupId;
+  // Se obtiene el token de autenticación
+  //const key = req.headers['x-api-key'];
+
+  if (!req.headers.authorization) {
+    res.status(400).send("No authentication bearer token");
+    return next("router");    
+  }
+  const key = req.headers.authorization.split(" ")[1];
+  // Se valida el token contra el identificador de grupo
+  if (!validateKey(key, groupId)) {
+    res.status(400).send("Wrong key");
+    return next("router");
+  }
+  next();
+}
 
 /**
  * Valida la clave de autorización que se ha enviado para acceder al endpoint
@@ -35,13 +65,6 @@ const db = require("./dbconnection.js");
 function getEvents (req, res) {
   // Se obtiene el identificador del grupo
   const groupId = req.params.groupId;
-  // Se obtiene el token de autenticación
-  const key = req.headers['x-api-key'];
-  // Se valida el token contra el identificador de grupo
-  if (!validateKey(key,groupId)) {
-    res.status(400).send("Wrong key");
-    return;
-  }
   new Promise(function(resolve, reject) {
     let result = {};
     let group = db.groups[groupId];
@@ -96,14 +119,6 @@ function pushEvents (req, res) {
   // Se obtiene el identificador del grupo
   const groupId = req.params.groupId;
   const events = req.body;
-  // Se obtiene el token de autenticación
-  const key = req.headers['x-api-key'];
-  // Se valida el token contra el identificador de grupo
-  if (!validateKey(key,groupId)) {
-    // El token no es válido => Error 400
-    res.status(400).send("Wrong key");
-    return;
-  }
   // Solo guardamos en la base de datos si nos han enviado
   // los eventos en una lista
   if ( events && Array.isArray(events) ) {
