@@ -60,6 +60,7 @@ module.exports = {
                 const anySc = db.mongoose.Schema({ timestamp: String }, { strict: false, collection: groupId, capped: { size: maxSize, max: maxDocuments } });
                 anySc.method("toJSON", function() {
                     const { __v, _id, ...object } = this.toObject();
+                    object['id'] = this._id;
                     return object;
                 });
                 this.groups[groupId] = db.mongoose.model(groupId, anySc);

@@ -1,0 +1,15 @@
+# Ejemplo de uso de la API del servidor de telemetría
+# Se puede ejecutar usando RestClient en VCode
+
+### POST Add a new event list to the telemetry server
+POST http://localhost:8080/telemetry/grupo01/
+x-api-key: <My Token>
+Content-Type: application/json
+
+[
+    {  "myId": 5, "type": "myEvent"}
+]
+
+### GET Return the event collections for grupo01
+GET http://localhost:8080/telemetry/grupo01/
+x-api-key: <My Token>
